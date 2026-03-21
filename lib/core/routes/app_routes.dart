@@ -33,6 +33,11 @@ import '../../features/chat/presentation/screens/chat_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/notifications_screen.dart';
 import '../../features/settings/presentation/screens/premium_screen.dart';
+import '../../features/settings/presentation/screens/privacy_safety_screen.dart';
+import '../../features/settings/presentation/screens/blocked_users_screen.dart';
+import '../../features/settings/presentation/screens/help_support_screen.dart';
+import '../../features/settings/presentation/screens/send_feedback_screen.dart';
+import '../../features/settings/presentation/screens/about_screen.dart';
 import '../../features/discover/presentation/screens/story_view_screen.dart';
 import '../../data/models/profile_model.dart';
 import '../../data/models/chat_model.dart';
@@ -127,6 +132,16 @@ class AppRoutes {
 
       case RouteNames.settings:
         return _slide(const SettingsScreen());
+      case RouteNames.privacySafety:
+        return _slide(const PrivacySafetyScreen());
+      case RouteNames.blockedUsers:
+        return _slide(const BlockedUsersScreen());
+      case RouteNames.helpSupport:
+        return _slide(const HelpSupportScreen());
+      case RouteNames.sendFeedback:
+        return _slide(const SendFeedbackScreen());
+      case RouteNames.about:
+        return _slide(const AboutScreen());
 
       case RouteNames.storyView:
         final story = settings.arguments as StoryModel?;

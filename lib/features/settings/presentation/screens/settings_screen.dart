@@ -34,8 +34,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _section('Account', [
             _tile(Icons.person_outline_rounded, 'Edit Profile', () => Navigator.pushNamed(context, RouteNames.editProfile)),
             _tile(Icons.notifications_none_rounded, 'Notifications', () => Navigator.pushNamed(context, RouteNames.notifications)),
-            _tile(Icons.shield_outlined, 'Privacy & Safety', () {}),
-            _tile(Icons.block_rounded, 'Blocked Users', () {}),
+            _tile(Icons.shield_outlined, 'Privacy & Safety', () => Navigator.pushNamed(context, RouteNames.privacySafety)),
+            _tile(Icons.block_rounded, 'Blocked Users', () => Navigator.pushNamed(context, RouteNames.blockedUsers)),
           ]),
           _section('Discovery', [
             _toggleTile(Icons.location_on_outlined, 'Location Services', _locationServices, (v) => setState(() => _locationServices = v)),
@@ -50,9 +50,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _tile(Icons.restore_rounded, 'Restore Purchases', () {}),
           ]),
           _section('Support', [
-            _tile(Icons.help_outline_rounded, 'Help & Support', () {}),
-            _tile(Icons.feedback_outlined, 'Send Feedback', () {}),
-            _tile(Icons.info_outline_rounded, 'About LoveAxis', () {}),
+            _tile(Icons.help_outline_rounded, 'Help & Support', () => Navigator.pushNamed(context, RouteNames.helpSupport)),
+            _tile(Icons.feedback_outlined, 'Send Feedback', () => Navigator.pushNamed(context, RouteNames.sendFeedback)),
+            _tile(Icons.info_outline_rounded, 'About LoveAxis', () => Navigator.pushNamed(context, RouteNames.about)),
           ]),
           const SizedBox(height: 20),
           // Logout

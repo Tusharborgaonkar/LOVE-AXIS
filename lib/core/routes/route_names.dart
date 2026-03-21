@@ -16,6 +16,11 @@ class RouteNames {
   static const String premium = '/premium';
   static const String notifications = '/notifications';
   static const String settings = '/settings';
+  static const String privacySafety = '/privacy-safety';
+  static const String blockedUsers = '/blocked-users';
+  static const String helpSupport = '/help-support';
+  static const String sendFeedback = '/send-feedback';
+  static const String about = '/about';
   static const String storyView = '/story-view';
   static const String phoneNumber = '/phone-number';
   static const String otpVerification = '/otp-verification';

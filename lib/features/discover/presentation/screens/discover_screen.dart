@@ -8,6 +8,8 @@ import '../../../../common/widgets/cards/profile_card.dart';
 import '../../../../data/dummy/dummy_profiles.dart';
 import '../../../../data/dummy/dummy_stories.dart';
 import '../../../../data/models/profile_model.dart';
+import '../../../../data/dummy/dummy_chats.dart';
+
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -385,12 +387,12 @@ class _DiscoverScreenState extends State<DiscoverScreen>
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _actionBtn(Icons.close_rounded, AppColors.error, 52, () => _swipeLeft()),
-          _actionBtn(Icons.star_rounded, AppColors.superLikeBlue, 44,
-              () => Navigator.pushNamed(context, RouteNames.premium),
+          _actionBtn(Icons.star_rounded, AppColors.superLikeBlue, 44, () {},
               gradient: AppGradients.lavenderToPeach),
           _actionBtn(Icons.favorite_rounded, AppColors.primary, 56, () => _swipeRight(),
               gradient: AppGradients.primary),
-          _actionBtn(Icons.bolt_rounded, AppColors.premiumGold, 44, () {},
+          _actionBtn(Icons.bolt_rounded, AppColors.premiumGold, 44,
+              () => Navigator.pushNamed(context, RouteNames.premium),
               gradient: AppGradients.gold),
         ],
       ),
@@ -519,7 +521,21 @@ class _MatchCelebrationState extends State<_MatchCelebration>
                     ),
                   ),
                   const SizedBox(height: 28),
-                  GradientButton(label: 'Send a Message 💬', onTap: widget.onDismiss),
+                  GradientButton(
+                    label: 'Send a Message 💬',
+                    onTap: () {
+                      widget.onDismiss();
+                      Navigator.pushNamed(
+                        context,
+                        RouteNames.chatDetail,
+                        arguments: dummyChats.firstWhere(
+                          (c) => c.userId == widget.profile.id,
+                          orElse: () => dummyChats[0],
+                        ),
+                      );
+                    },
+                  ),
+
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: widget.onDismiss,

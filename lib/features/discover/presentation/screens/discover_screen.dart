@@ -77,6 +77,19 @@ class _DiscoverScreenState extends State<DiscoverScreen>
     _swipeCtrl.forward();
   }
 
+  void _superLike() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Super Liked! 🌟'),
+        backgroundColor: AppColors.superLikeBlue,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+    _swipeRight();
+  }
+
   void _nextCard() {
     setState(() {
       _dragDx = 0;
@@ -387,7 +400,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _actionBtn(Icons.close_rounded, AppColors.error, 52, () => _swipeLeft()),
-          _actionBtn(Icons.star_rounded, AppColors.superLikeBlue, 44, () {},
+          _actionBtn(Icons.star_rounded, AppColors.superLikeBlue, 44, _superLike,
               gradient: AppGradients.lavenderToPeach),
           _actionBtn(Icons.favorite_rounded, AppColors.primary, 56, () => _swipeRight(),
               gradient: AppGradients.primary),

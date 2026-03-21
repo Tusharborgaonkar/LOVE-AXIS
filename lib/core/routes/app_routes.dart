@@ -4,6 +4,7 @@ import '../../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
+import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/onboarding/presentation/screens/phone_number_screen.dart';
 import '../../features/onboarding/presentation/screens/otp_verification_screen.dart';
 import '../../features/onboarding/presentation/screens/intro_screen.dart';
@@ -142,6 +143,8 @@ class AppRoutes {
         return _slide(const SendFeedbackScreen());
       case RouteNames.about:
         return _slide(const AboutScreen());
+      case RouteNames.forgotPassword:
+        return _slide(const ForgotPasswordScreen());
 
       case RouteNames.storyView:
         final story = settings.arguments as StoryModel?;

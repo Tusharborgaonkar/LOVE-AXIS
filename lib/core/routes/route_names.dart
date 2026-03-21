@@ -42,4 +42,5 @@ class RouteNames {
   static const String firstMove = '/first_move';
   static const String infoScreen = '/info_screen';
   static const String kindnessPolicy = '/kindness_policy';
+  static const String forgotPassword = '/forgot-password';
 }

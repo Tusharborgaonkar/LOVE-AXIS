@@ -83,11 +83,17 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.videocam_outlined, color: AppColors.textSecondary),
-            onPressed: () {},
+            onPressed: () => _showTopSnackBar('Starting video call... 🎥'),
           ),
-          IconButton(
+          PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert_rounded, color: AppColors.textSecondary),
-            onPressed: () {},
+            onSelected: (v) => _showTopSnackBar('$v selected'),
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'View Profile', child: Text('View Profile')),
+              const PopupMenuItem(value: 'Mute Notifications', child: Text('Mute Notifications')),
+              const PopupMenuItem(value: 'Clear Chat', child: Text('Clear Chat')),
+              const PopupMenuItem(value: 'Block', child: Text('Block', style: TextStyle(color: Colors.red))),
+            ],
           ),
         ],
       ),
@@ -130,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Row(
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: _showMediaSheet,
               child: Container(
                 width: 40,
                 height: 40,
@@ -152,14 +158,18 @@ class _ChatScreenState extends State<ChatScreen> {
                     hintStyle: AppTextStyles.bodyMedium,
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    suffixIcon: const Icon(Icons.emoji_emotions_outlined, color: AppColors.textHint, size: 20),
+                    suffixIcon: InkWell(
+                      onTap: () => _showTopSnackBar('Emoji picker coming soon! 😊'),
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Icon(Icons.emoji_emotions_outlined, color: AppColors.textHint, size: 20),
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(width: 10),
             GestureDetector(
-              onTap: _send,
+              onTap: _hasText ? _send : () => _showTopSnackBar('Recording voice message... 🎙️'),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 width: 46,
@@ -174,6 +184,66 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showTopSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  void _showMediaSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _mediaItem(Icons.image_rounded, 'Gallery', Colors.blue),
+                  _mediaItem(Icons.camera_alt_rounded, 'Camera', Colors.pink),
+                  _mediaItem(Icons.location_on_rounded, 'Location', Colors.green),
+                  _mediaItem(Icons.person_rounded, 'Contact', Colors.orange),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _mediaItem(IconData icon, String label, Color color) {
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        _showTopSnackBar('$label feature coming soon!');
+      },
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: AppTextStyles.caption.copyWith(color: AppColors.textPrimary)),
+        ],
       ),
     );
   }

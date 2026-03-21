@@ -85,7 +85,10 @@ class LoginScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: Text('Forgot Password?', style: AppTextStyles.bodyPrimary),
+                          child: GestureDetector(
+                            onTap: () => Navigator.pushNamed(context, RouteNames.forgotPassword),
+                            child: Text('Forgot Password?', style: AppTextStyles.bodyPrimary),
+                          ),
                         ),
                         const SizedBox(height: 28),
                         GradientButton(

@@ -145,7 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   _buildButton(
                     context,
                     label: 'Create an account',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.signup),
+                    onTap: () => Navigator.pushNamed(context, RouteNames.phoneNumber),
                     color: Colors.black,
                     textColor: Colors.white,
                   ),

@@ -26,4 +26,15 @@ class RouteNames {
   static const String modeSelection = '/mode_selection';
   static const String meetingPreference = '/meeting_preference';
   static const String datingIntent = '/dating_intent';
+  static const String heightSelection = '/height_selection';
+  static const String interests = '/interests';
+  static const String habits = '/habits';
+  static const String familyKids = '/family_kids';
+  static const String values = '/values';
+  static const String personalityPrompts = '/personality_prompts';
+  static const String photoUpload = '/photo_upload';
+  static const String openingMove = '/opening_move';
+  static const String firstMove = '/first_move';
+  static const String infoScreen = '/info_screen';
+  static const String kindnessPolicy = '/kindness_policy';
 }

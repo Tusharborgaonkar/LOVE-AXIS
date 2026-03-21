@@ -13,6 +13,17 @@ import '../../features/onboarding/presentation/screens/email_screen.dart';
 import '../../features/onboarding/presentation/screens/mode_selection_screen.dart';
 import '../../features/onboarding/presentation/screens/meeting_preference_screen.dart';
 import '../../features/onboarding/presentation/screens/dating_intent_screen.dart';
+import '../../features/onboarding/presentation/screens/height_selection_screen.dart';
+import '../../features/onboarding/presentation/screens/interests_selection_screen.dart';
+import '../../features/onboarding/presentation/screens/habits_screen.dart';
+import '../../features/onboarding/presentation/screens/family_kids_screen.dart';
+import '../../features/onboarding/presentation/screens/values_screen.dart';
+import '../../features/onboarding/presentation/screens/personality_prompts_screen.dart';
+import '../../features/onboarding/presentation/screens/photo_upload_screen.dart';
+import '../../features/onboarding/presentation/screens/opening_move_screen.dart';
+import '../../features/onboarding/presentation/screens/first_move_screen.dart';
+import '../../features/onboarding/presentation/screens/info_screen.dart';
+import '../../features/onboarding/presentation/screens/kindness_policy_screen.dart';
 import '../../features/auth/presentation/screens/main_shell.dart';
 import '../../features/auth/presentation/screens/likes_screen.dart';
 import '../../features/profile/presentation/screens/profile_detail_screen.dart';
@@ -68,6 +79,28 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const MeetingPreferenceScreen());
       case RouteNames.datingIntent:
         return MaterialPageRoute(builder: (_) => const DatingIntentScreen());
+      case RouteNames.heightSelection:
+        return MaterialPageRoute(builder: (_) => const HeightSelectionScreen());
+      case RouteNames.interests:
+        return MaterialPageRoute(builder: (_) => const InterestsSelectionScreen());
+      case RouteNames.habits:
+        return MaterialPageRoute(builder: (_) => const HabitsScreen());
+      case RouteNames.familyKids:
+        return MaterialPageRoute(builder: (_) => const FamilyKidsScreen());
+      case RouteNames.values:
+        return MaterialPageRoute(builder: (_) => const ValuesScreen());
+      case RouteNames.personalityPrompts:
+        return MaterialPageRoute(builder: (_) => const PersonalityPromptsScreen());
+      case RouteNames.photoUpload:
+        return MaterialPageRoute(builder: (_) => const PhotoUploadScreen());
+      case RouteNames.openingMove:
+        return MaterialPageRoute(builder: (_) => const OpeningMoveScreen());
+      case RouteNames.firstMove:
+        return MaterialPageRoute(builder: (_) => const FirstMoveScreen());
+      case RouteNames.infoScreen:
+        return MaterialPageRoute(builder: (_) => const OnboardingInfoScreen());
+      case RouteNames.kindnessPolicy:
+        return MaterialPageRoute(builder: (_) => const KindnessPolicyScreen());
       case RouteNames.main:
         return _fade(const MainShell());
 

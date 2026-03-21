@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/routes/route_names.dart';
 import '../widgets/onboarding_progress_bar.dart';
 import '../widgets/onboarding_next_button.dart';
 import '../widgets/onboarding_option_tile.dart';
@@ -106,7 +107,7 @@ class _DatingIntentScreenState extends State<DatingIntentScreen> {
                     OnboardingNextButton(
                       enabled: _selectedIntents.isNotEmpty,
                       onTap: () {
-                        // TODO: Navigate to next step
+                        Navigator.pushNamed(context, RouteNames.heightSelection);
                       },
                     ),
                   ],

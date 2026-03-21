@@ -37,7 +37,7 @@ class _PrivacySafetyScreenState extends State<PrivacySafetyScreen> {
           const SizedBox(height: 24),
           _section('Safety Features', [
             _toggleTile(Icons.security_rounded, 'Incognito Mode', 'Hide your profile from everyone except people you like', _incognitoMode, (v) => setState(() => _incognitoMode = v)),
-            _tile(Icons.verified_user_outlined, 'Face Verification', () {}, subtitle: 'Verify your identity for a blue checkmark'),
+            _tile(Icons.verified_user_outlined, 'Face Verification', () {}),
           ]),
           const SizedBox(height: 24),
           _section('Security', [
@@ -71,12 +71,11 @@ class _PrivacySafetyScreenState extends State<PrivacySafetyScreen> {
     );
   }
 
-  Widget _tile(IconData icon, String label, VoidCallback onTap, {String? subtitle}) {
+  Widget _tile(IconData icon, String label, VoidCallback onTap) {
     return ListTile(
       onTap: onTap,
       leading: Icon(icon, color: AppColors.primary),
       title: Text(label, style: AppTextStyles.titleMedium),
-      subtitle: subtitle != null ? Text(subtitle, style: AppTextStyles.caption) : null,
       trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textHint),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

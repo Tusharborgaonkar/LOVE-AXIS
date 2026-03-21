@@ -1,0 +1,29 @@
+class RouteNames {
+  static const String splash = '/';
+  static const String welcome = '/welcome';
+  static const String onboarding = '/onboarding';
+  static const String login = '/login';
+  static const String signup = '/signup';
+  static const String main = '/main';
+  static const String discover = '/discover';
+  static const String likes = '/likes';
+  static const String matches = '/matches';
+  static const String chatList = '/chat-list';
+  static const String chatDetail = '/chat-detail';
+  static const String profileDetail = '/profile-detail';
+  static const String myProfile = '/my-profile';
+  static const String editProfile = '/edit-profile';
+  static const String premium = '/premium';
+  static const String notifications = '/notifications';
+  static const String settings = '/settings';
+  static const String storyView = '/story-view';
+  static const String phoneNumber = '/phone-number';
+  static const String otpVerification = '/otp-verification';
+  static const String intro = '/intro';
+  static const String gender = '/gender';
+  static const String genderVisibility = '/gender_visibility';
+  static const String email = '/email';
+  static const String modeSelection = '/mode_selection';
+  static const String meetingPreference = '/meeting_preference';
+  static const String datingIntent = '/dating_intent';
+}

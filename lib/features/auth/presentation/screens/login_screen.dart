@@ -117,7 +117,7 @@ class LoginScreen extends StatelessWidget {
                         const SizedBox(height: 32),
                         Center(
                           child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, RouteNames.signup),
+                            onTap: () => Navigator.pushNamed(context, RouteNames.phoneNumber),
                             child: RichText(
                               text: TextSpan(
                                 text: "Don't have an account? ",

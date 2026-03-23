@@ -61,7 +61,7 @@ class AppRoutes {
         return _slide(const LoginScreen());
 
       case RouteNames.signup:
-        return _slide(const SignupScreen());
+        return _slide(const PhoneNumberScreen());
       case RouteNames.phoneNumber:
         return _slide(const PhoneNumberScreen());
       case RouteNames.otpVerification:

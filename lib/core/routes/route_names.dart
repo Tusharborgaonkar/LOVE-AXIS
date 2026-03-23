@@ -3,7 +3,7 @@ class RouteNames {
   static const String welcome = '/welcome';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
-  static const String signup = '/signup';
+  static const String signup = '/phone-number';
   static const String main = '/main';
   static const String discover = '/discover';
   static const String likes = '/likes';

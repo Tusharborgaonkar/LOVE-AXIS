@@ -9,7 +9,11 @@ import '../../../../data/dummy/dummy_profiles.dart';
 import '../../../../data/dummy/dummy_stories.dart';
 import '../../../../data/models/profile_model.dart';
 import '../../../../data/dummy/dummy_chats.dart';
-
+import '../../../../data/models/story_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io' show File;
+import 'add_story_screen.dart';
+import 'package:flutter/foundation.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -22,6 +26,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
     with SingleTickerProviderStateMixin {
   final List<ProfileModel> _profiles = List.from(dummyProfiles);
   int _topIndex = 0;
+  final List<XFile> _myStories = [];
 
   // Drag state
   double _dragDx = 0;
@@ -106,6 +111,45 @@ class _DiscoverScreenState extends State<DiscoverScreen>
     });
   }
 
+  Future<void> _addStory() async {
+    try {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const AddStoryScreen()),
+      );
+      
+      if (result is String && mounted) {
+        setState(() {
+          _myStories.add(XFile(result));
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Story added successfully! ✨'),
+            backgroundColor: AppColors.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error adding story: $e');
+    }
+  }
+
+  void _viewMyStory() {
+    if (_myStories.isEmpty) return;
+    final myStory = StoryModel(
+      id: 'my_story',
+      userId: 'me',
+      userName: 'My Story',
+      userImage: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200',
+      storyImage: _myStories.last.path,
+      storyImages: _myStories.map((e) => e.path).toList(),
+      isSeen: false,
+    );
+    Navigator.pushNamed(context, RouteNames.storyView, arguments: myStory);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -165,35 +209,48 @@ class _DiscoverScreenState extends State<DiscoverScreen>
         itemCount: dummyStories.length + 1,
         itemBuilder: (_, i) {
           if (i == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.divider, width: 2),
-                        ),
-                        child: const Icon(Icons.add_rounded, color: AppColors.primary, size: 30),
+            final hasStory = _myStories.isNotEmpty;
+            return GestureDetector(
+              onTap: hasStory ? _viewMyStory : _addStory,
+              onLongPress: _addStory,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2.5),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: hasStory ? AppGradients.primary : null,
+                        color: hasStory ? null : Colors.transparent,
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                          child: const Icon(Icons.add_circle_rounded, color: AppColors.primary, size: 20),
-                        ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                            child: const CircleAvatar(
+                              radius: 28,
+                              backgroundImage: NetworkImage('https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200'),
+                            ),
+                          ),
+                          if (!hasStory)
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                child: const Icon(Icons.add_circle_rounded, color: AppColors.primary, size: 20),
+                              ),
+                            ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text('My Story', style: AppTextStyles.caption),
-                ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text('My Story', style: AppTextStyles.caption),
+                  ],
+                ),
               ),
             );
           }

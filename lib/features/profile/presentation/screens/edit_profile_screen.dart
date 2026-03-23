@@ -7,6 +7,7 @@ import '../../../../core/theme/app_gradients.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../common/widgets/buttons/gradient_button.dart';
 import '../../../../common/widgets/inputs/custom_text_field.dart';
+import '../../../../core/routes/route_names.dart';
 // import '../../../../common/widgets/effects/animated_fade_slide.dart'; // unused
 
 
@@ -19,9 +20,12 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController(text: 'Alex Johnson');
+  final _birthdateController = TextEditingController(text: '12/05/1998');
   final _bioController = TextEditingController(text: 'Adventure seeker 🌍 | Coffee lover ☕ | Design enthusiast 🎨. Looking for someone who matches my energy and loves exploring new places.');
   final _jobController = TextEditingController(text: 'Product Designer');
   final _schoolController = TextEditingController(text: 'IIT Bombay');
+  final _locationController = TextEditingController(text: 'Mumbai, India');
+  final _lookingForController = TextEditingController(text: 'A long-term relationship');
   final ImagePicker _picker = ImagePicker();
   final List<XFile> _addedImages = [];
   // bool _isPickingImage = false; // unused
@@ -30,9 +34,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _birthdateController.dispose();
     _bioController.dispose();
     _jobController.dispose();
     _schoolController.dispose();
+    _locationController.dispose();
+    _lookingForController.dispose();
     super.dispose();
   }
 
@@ -94,15 +101,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
+              hint: 'Birthdate',
+              controller: _birthdateController,
+              prefixIcon: const Icon(Icons.calendar_today_rounded, color: AppColors.textHint),
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
               hint: 'Job Title',
               controller: _jobController,
               prefixIcon: const Icon(Icons.work_outline_rounded, color: AppColors.textHint),
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              hint: 'School',
+              hint: 'Education',
               controller: _schoolController,
               prefixIcon: const Icon(Icons.school_outlined, color: AppColors.textHint),
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              hint: 'Location',
+              controller: _locationController,
+              prefixIcon: const Icon(Icons.location_on_outlined, color: AppColors.textHint),
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              hint: 'Looking For',
+              controller: _lookingForController,
+              prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textHint),
             ),
             const SizedBox(height: 32),
 
@@ -111,7 +136,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Interests', style: AppTextStyles.titleLarge),
-                Text('Edit', style: AppTextStyles.bodyPrimary),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, RouteNames.interests),
+                  child: Text('Edit', style: AppTextStyles.bodyPrimary),
+                ),
               ],
             ),
             const SizedBox(height: 12),

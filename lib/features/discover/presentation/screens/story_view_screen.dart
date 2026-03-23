@@ -3,6 +3,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../data/models/story_model.dart';
 import '../../../../common/widgets/common/app_network_image.dart';
+import 'dart:io' show File;
+import 'package:flutter/foundation.dart';
 
 class StoryViewScreen extends StatefulWidget {
   final StoryModel story;
@@ -16,19 +18,56 @@ class StoryViewScreen extends StatefulWidget {
 class _StoryViewScreenState extends State<StoryViewScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _progressController;
+  int _currentIndex = 0;
+  late List<String> _images;
 
   @override
   void initState() {
     super.initState();
+    _images = widget.story.storyImages ?? [widget.story.storyImage];
+    
     _progressController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          Navigator.pop(context);
+          _nextStory();
         }
       });
     _progressController.forward();
+  }
+
+  void _nextStory() {
+    if (_currentIndex < _images.length - 1) {
+      setState(() => _currentIndex++);
+      _progressController.reset();
+      _progressController.forward();
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  void _previousStory() {
+    if (_currentIndex > 0) {
+      setState(() => _currentIndex--);
+      _progressController.reset();
+      _progressController.forward();
+    } else {
+      _progressController.reset();
+      _progressController.forward();
+    }
+  }
+
+  Widget _buildBottomActionItem(IconData icon, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(icon, color: Colors.white, size: 24),
+        const SizedBox(height: 6),
+        Text(label, style: const TextStyle(color: Colors.white, fontSize: 11)),
+      ],
+    );
   }
 
   @override
@@ -39,16 +78,25 @@ class _StoryViewScreenState extends State<StoryViewScreen>
 
   @override
   Widget build(BuildContext context) {
+    final currentImagePath = _images[_currentIndex];
+    final isNetwork = currentImagePath.startsWith('http');
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Story Image
-          AppNetworkImage(
-            url: widget.story.storyImage,
-            fit: BoxFit.cover,
-          ),
+          isNetwork
+              ? AppNetworkImage(
+                  url: currentImagePath,
+                  fit: BoxFit.cover,
+                )
+              : SizedBox.expand(
+                  child: kIsWeb
+                      ? Image.network(currentImagePath, fit: BoxFit.cover)
+                      : Image.file(File(currentImagePath), fit: BoxFit.cover),
+                ),
 
           // Gradient overlay for header
           Positioned(
@@ -79,51 +127,81 @@ class _StoryViewScreenState extends State<StoryViewScreen>
                 children: [
                   // Progress Bar
                   Row(
-                    children: [
-                      Expanded(
-                        child: AnimatedBuilder(
-                          animation: _progressController,
-                          builder: (context, child) {
-                            return LinearProgressIndicator(
-                              value: _progressController.value,
-                              backgroundColor: Colors.white24,
-                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                              minHeight: 2,
-                            );
-                          },
+                    children: List.generate(_images.length, (index) {
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: AnimatedBuilder(
+                            animation: _progressController,
+                            builder: (context, child) {
+                              double progressValue = 0.0;
+                              if (index < _currentIndex) progressValue = 1.0;
+                              else if (index == _currentIndex) progressValue = _progressController.value;
+
+                              return LinearProgressIndicator(
+                                value: progressValue,
+                                backgroundColor: Colors.white24,
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                minHeight: 2,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      );
+                    }),
                   ),
                   const SizedBox(height: 16),
                   
                   // User Info
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundImage: NetworkImage(widget.story.userImage),
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CircleAvatar(
+                            radius: 18,
+                            backgroundImage: NetworkImage(widget.story.userImage),
+                          ),
+                          Positioned(
+                            bottom: -2,
+                            right: -2,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: Colors.black,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.add, color: Colors.white, size: 12),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               widget.story.userName,
-                              style: AppTextStyles.bodyWhite.copyWith(fontWeight: FontWeight.w700),
+                              style: AppTextStyles.bodyWhite.copyWith(fontWeight: FontWeight.w600, fontSize: 14),
                             ),
+                            const SizedBox(width: 8),
                             Text(
-                              'Just now',
-                              style: AppTextStyles.caption.copyWith(color: Colors.white70),
+                              '1m',
+                              style: AppTextStyles.bodyWhite.copyWith(color: Colors.white70, fontSize: 14),
                             ),
                           ],
                         ),
                       ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close_rounded, color: Colors.white),
+                      // Top Right UI
+                      const CircleAvatar(
+                        radius: 18,
+                        backgroundImage: NetworkImage('https://images.unsplash.com/photo-1600847990145-2101dd8922c0?w=200'),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.more_vert, color: Colors.white, size: 24),
                       ),
                     ],
                   ),
@@ -132,35 +210,49 @@ class _StoryViewScreenState extends State<StoryViewScreen>
             ),
           ),
 
-          // Bottom Bar (Reply)
+          // Bottom Area
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: Colors.white38),
-                        ),
-                        child: Text(
-                          'Reply to ${widget.story.userName.split(' ')[0]}...',
-                          style: const TextStyle(color: Colors.white, fontSize: 14),
-                        ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text overlay area
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Expanded(
+                        child: Text('Say something...', style: TextStyle(color: Colors.white70, fontSize: 13)),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Icon(Icons.favorite_border_rounded, color: Colors.white, size: 28),
-                  ],
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Text('@bajrangbaanchallenge', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                          Text('All Devotional Rights Reserved @sony.harshit', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                // Black Navigation Bar
+                Container(
+                  color: Colors.black,
+                  padding: const EdgeInsets.only(top: 12, bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildBottomActionItem(Icons.share_outlined, 'Share to'),
+                      _buildBottomActionItem(Icons.mobile_screen_share_rounded, 'Share on...'),
+                      _buildBottomActionItem(Icons.alternate_email_rounded, 'Mention'),
+                      _buildBottomActionItem(Icons.more_vert_rounded, 'More'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -170,17 +262,13 @@ class _StoryViewScreenState extends State<StoryViewScreen>
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      _progressController.reset();
-                      _progressController.forward();
-                      // In a real app, go to previous story
-                    },
+                    onTap: _previousStory,
                     child: Container(color: Colors.transparent),
                   ),
                 ),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: _nextStory,
                     child: Container(color: Colors.transparent),
                   ),
                 ),

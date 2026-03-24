@@ -16,7 +16,8 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
     '🎵 Music', '🎬 Movies', '🏋️ Gym', '✈️ Travel', '🍔 Food',
     '📚 Reading', '🎮 Gaming', '🐶 Pets', '🧘 Yoga', '📸 Photography',
     '🎨 Art', '🍳 Cooking', '🧗 Climbing', '🍷 Wine', '💃 Dancing',
-    '☕ Coffee', '⚽ Sports', '🎤 Karaoke', '🌳 Nature', '♟️ Board Games'
+    '☕ Coffee', '⚽ Sports', '🎤 Karaoke', '🌳 Nature', '♟️ Board Games',
+    '💻 Coding'
   ];
 
   void _toggleInterest(String interest) {
@@ -43,20 +44,22 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
               const OnboardingProgressBar(value: 0.75),
               const SizedBox(height: 48),
               const Text(
-                "Choose up to 5 things you're really into",
+                "Choose up to 5 things\nyou're really into",
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 32,
                   fontWeight: FontWeight.w800,
-                  color: Colors.black87,
-                  height: 1.2,
+                  color: Colors.black,
+                  height: 1.1,
+                  letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Wrap(
                     spacing: 12,
-                    runSpacing: 12,
+                    runSpacing: 14,
                     children: _interests.map((interest) => _buildInterestChip(interest)).toList(),
                   ),
                 ),
@@ -69,10 +72,11 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
                   children: [
                     Text(
                       '${_selectedInterests.length}/5 selected',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black38,
-                        fontWeight: FontWeight.w600,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black.withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
                       ),
                     ),
                     OnboardingNextButton(
@@ -97,21 +101,28 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
       onTap: () => _toggleInterest(interest),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFFD700) : Colors.black.withOpacity(0.05),
+          color: isSelected ? const Color(0xFFFFE000) : const Color(0xFFF5F5F5),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: isSelected ? Colors.black87 : Colors.transparent,
+            color: isSelected ? Colors.black.withOpacity(0.1) : Colors.transparent,
             width: 1,
           ),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ] : null,
         ),
         child: Text(
           interest,
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 16,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? Colors.black87 : Colors.black54,
+            color: isSelected ? Colors.black : Colors.black87,
           ),
         ),
       ),

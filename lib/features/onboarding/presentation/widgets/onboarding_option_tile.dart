@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class OnboardingOptionTile extends StatelessWidget {
-  final String title;
+  final String? title;
+  final Widget? titleWidget;
   final String? subtitle;
   final bool isSelected;
   final VoidCallback onTap;
@@ -10,13 +11,14 @@ class OnboardingOptionTile extends StatelessWidget {
 
   const OnboardingOptionTile({
     super.key,
-    required this.title,
+    this.title,
+    this.titleWidget,
     this.subtitle,
     required this.isSelected,
     required this.onTap,
     this.trailing,
     this.selectedColor,
-  });
+  }) : assert(title != null || titleWidget != null);
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +39,17 @@ class OnboardingOptionTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: Colors.black87,
+                   if (titleWidget != null)
+                    titleWidget!
+                  else
+                    Text(
+                      title ?? "",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 4),
                     Text(

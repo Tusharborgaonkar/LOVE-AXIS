@@ -13,6 +13,10 @@ class OpeningMoveScreen extends StatefulWidget {
 
 class _OpeningMoveScreenState extends State<OpeningMoveScreen> {
   String? _selectedMove;
+  bool _isCustomSelected = false;
+  late TextEditingController _customMoveController;
+  late FocusNode _customMoveFocusNode;
+
   final List<String> _options = [
     "What’s your perfect weekend?",
     "Coffee or cocktails?",
@@ -20,6 +24,20 @@ class _OpeningMoveScreenState extends State<OpeningMoveScreen> {
     "Your go-to comfort food?",
     "Dream travel destination?",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _customMoveController = TextEditingController();
+    _customMoveFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _customMoveController.dispose();
+    _customMoveFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,17 +78,53 @@ class _OpeningMoveScreenState extends State<OpeningMoveScreen> {
                   itemBuilder: (context, index) {
                     if (index == _options.length) {
                       return OnboardingOptionTile(
-                        title: "Write my own",
-                        isSelected: _selectedMove == "custom",
-                        onTap: () => setState(() => _selectedMove = "custom"),
-                        trailing: const Icon(Icons.edit_note_rounded, color: Colors.black38),
+                        title: _isCustomSelected ? null : "Write my own",
+                        titleWidget: _isCustomSelected
+                            ? TextField(
+                                controller: _customMoveController,
+                                focusNode: _customMoveFocusNode,
+                                decoration: const InputDecoration(
+                                  hintText: "Type your opening move...",
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 4),
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                ),
+                                cursorColor: Colors.black87,
+                                autofocus: true,
+                                onChanged: (v) => setState(() {}),
+                              )
+                            : null,
+                        isSelected: _isCustomSelected,
+                        onTap: () {
+                          setState(() {
+                            _isCustomSelected = true;
+                            _selectedMove = null;
+                          });
+                          _customMoveFocusNode.requestFocus();
+                        },
+                        trailing: _isCustomSelected
+                            ? null
+                            : const Icon(Icons.edit_note_rounded, color: Colors.black38),
                       );
                     }
                     final option = _options[index];
+                    final isOptionSelected = !_isCustomSelected && _selectedMove == option;
                     return OnboardingOptionTile(
                       title: option,
-                      isSelected: _selectedMove == option,
-                      onTap: () => setState(() => _selectedMove = option),
+                      isSelected: isOptionSelected,
+                      onTap: () => setState(() {
+                        _selectedMove = option;
+                        _isCustomSelected = false;
+                      }),
                     );
                   },
                 ),
@@ -80,8 +134,11 @@ class _OpeningMoveScreenState extends State<OpeningMoveScreen> {
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: OnboardingNextButton(
-                    enabled: _selectedMove != null,
+                    enabled: (_selectedMove != null && !_isCustomSelected) || (_isCustomSelected && _customMoveController.text.isNotEmpty),
                     onTap: () {
+                      final move = _isCustomSelected ? _customMoveController.text : _selectedMove;
+                      // You might want to pass 'move' to the next screen or save it.
+                      // For now, I'll just navigate as before.
                       Navigator.pushNamed(context, RouteNames.firstMove);
                     },
                   ),

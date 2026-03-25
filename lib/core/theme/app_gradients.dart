@@ -39,7 +39,8 @@ class AppGradients {
 
   // Card overlay (bottom of profile card)
   static const LinearGradient cardOverlay = LinearGradient(
-    colors: [Colors.transparent, Color(0xCC000000)],
+    colors: [Colors.transparent, Colors.transparent, Color(0x77000000), Color(0xBB000000), Color(0xEE000000)],
+    stops: [0.0, 0.35, 0.6, 0.85, 1.0],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );

@@ -200,7 +200,23 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 24),
+
+                  // Remaining Photos (Show all photos vertically)
+                  ...profile.imageUrls.skip(1).map((url) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: AppNetworkImage(
+                        url: url,
+                        width: double.infinity,
+                        height: 400,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )).toList(),
+                  
+                  const SizedBox(height: 24),
 
                   // CTA buttons
                   AnimatedFadeSlide(

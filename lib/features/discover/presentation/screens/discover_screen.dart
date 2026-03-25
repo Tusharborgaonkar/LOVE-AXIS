@@ -35,6 +35,9 @@ class _DiscoverScreenState extends State<DiscoverScreen>
   bool _showMatch = false;
   ProfileModel? _matchedProfile;
 
+  // Photo switching state
+  int _currentPhotoIndex = 0;
+
   // Animation control
   late AnimationController _swipeCtrl;
   bool _isAnimating = false;
@@ -100,6 +103,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
       _dragDx = 0;
       _dragDy = 0;
       _isDragging = false;
+      _currentPhotoIndex = 0; // Reset for next card
       _topIndex = (_topIndex + 1) % _profiles.length;
     });
   }
@@ -309,7 +313,7 @@ class _DiscoverScreenState extends State<DiscoverScreen>
 
   Widget _buildCardStack(Size size) {
     final cardWidth = size.width - 48;
-    final cardHeight = size.height * 0.52;
+    final cardHeight = size.height * 0.68;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -370,6 +374,36 @@ class _DiscoverScreenState extends State<DiscoverScreen>
 
   Widget _buildTopCard(double width, double height) {
     return GestureDetector(
+      onTapUp: _isAnimating ? null : (details) {
+        if (_profiles.isEmpty) return;
+        final profile = _profiles[_topIndex];
+        
+        final tapX = details.localPosition.dx;
+        final tapY = details.localPosition.dy;
+
+        // If tap is in the bottom area (approx bottom 1/3 of card), open details
+        // The card height is approx size.height * 0.68
+        if (tapY > height * 0.7) {
+          Navigator.pushNamed(
+            context, 
+            RouteNames.profileDetail, 
+            arguments: profile
+          );
+          return;
+        }
+
+        if (profile.imageUrls.length <= 1) return;
+
+        setState(() {
+          if (tapX > width * 0.45) {
+            // Next photo (Right 55% of card)
+            _currentPhotoIndex = (_currentPhotoIndex + 1) % profile.imageUrls.length;
+          } else {
+            // Previous photo (Left 45% of card)
+            _currentPhotoIndex = (_currentPhotoIndex - 1 + profile.imageUrls.length) % profile.imageUrls.length;
+          }
+        });
+      },
       onPanUpdate: _isAnimating ? null : (details) {
         setState(() {
           _dragDx += details.delta.dx;
@@ -410,23 +444,37 @@ class _DiscoverScreenState extends State<DiscoverScreen>
               width: width,
               height: height,
               child: ProfileCard(
-                key: ValueKey('card_${_profiles[_topIndex].id}'),
+                key: ValueKey('card_top_${_profiles[_topIndex].id}'),
                 profile: _profiles[_topIndex],
+                currentIndex: _currentPhotoIndex,
               ),
             ),
-            // Like indicator
-            if (_dragDx > 40)
+            // Pure Icon Swipe Indicators (Show only after 80% of action is reached)
+            if (_dragDx < -80)
               Positioned(
-                top: 24,
-                left: 20,
-                child: _swipeLabel('LIKE 💚', Colors.green, (_dragDx - 40) / 60),
+                top: 80,
+                right: 50,
+                child: Transform.rotate(
+                  angle: -0.15,
+                  child: _swipeIndicatorCircle(
+                    icon: Icons.close_rounded,
+                    iconColor: Colors.black,
+                    progress: ((_dragDx.abs() - 80) / 20).clamp(0.0, 1.0),
+                  ),
+                ),
               ),
-            // Nope indicator
-            if (_dragDx < -40)
+            if (_dragDx > 80)
               Positioned(
-                top: 24,
-                right: 20,
-                child: _swipeLabel('NOPE 💔', Colors.red, (_dragDx.abs() - 40) / 60),
+                top: 80,
+                left: 50,
+                child: Transform.rotate(
+                  angle: 0.15,
+                  child: _swipeIndicatorCircle(
+                    icon: Icons.favorite_rounded,
+                    iconColor: Colors.red,
+                    progress: ((_dragDx - 80) / 20).clamp(0.0, 1.0),
+                  ),
+                ),
               ),
           ],
         ),
@@ -434,20 +482,32 @@ class _DiscoverScreenState extends State<DiscoverScreen>
     );
   }
 
-  Widget _swipeLabel(String label, Color color, double opacity) {
-    return Opacity(
-      opacity: opacity.clamp(0.0, 1.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color, width: 2),
+  Widget _swipeIndicatorCircle({
+    required IconData icon,
+    required Color iconColor,
+    required double progress,
+  }) {
+    return Transform.scale(
+      scale: 0.8 + (0.4 * progress),
+      child: Opacity(
+        opacity: progress.clamp(0.0, 1.0),
+        child: Icon(
+          icon, 
+          color: iconColor, 
+          size: 70,
+          shadows: [
+            Shadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Text(label, style: AppTextStyles.titleLarge.copyWith(color: color)),
       ),
     );
   }
+
+
 
 
   Widget _buildActionBar() {

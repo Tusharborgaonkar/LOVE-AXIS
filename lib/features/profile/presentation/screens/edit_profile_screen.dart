@@ -29,6 +29,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _lookingForController = TextEditingController(text: 'A long-term relationship');
   final ImagePicker _picker = ImagePicker();
   final List<XFile> _addedImages = [];
+  bool _useBestPhoto = true;
   // bool _isPickingImage = false; // unused
 
 
@@ -190,8 +191,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 32),
 
-            _menuItem(Icons.photo_library_outlined, 'Best Photo', 'On'),
-            _menuItem(Icons.verified_user_rounded, 'Verification', 'Not ID verified', iconColor: Colors.blueAccent),
+            _menuItem(
+              Icons.photo_library_outlined, 
+              'Best Photo', 
+              _useBestPhoto ? 'On' : 'Off',
+              onTap: _showBestPhotoModal,
+            ),
+            _menuItem(
+              Icons.verified_user_rounded, 
+              'Verification', 
+              'Not ID verified', 
+              iconColor: Colors.blueAccent,
+              onTap: _showVerificationModal,
+            ),
             const SizedBox(height: 32),
 
             // Interests Section
@@ -733,26 +745,304 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _menuItem(IconData icon, String label, String value, {Color iconColor = Colors.black45}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
-      child: Row(
-        children: [
-          Icon(icon, color: iconColor, size: 28),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5), fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(width: 8),
-          Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.black.withOpacity(0.3)),
-        ],
+  Widget _menuItem(IconData icon, String label, String value, {Color iconColor = Colors.black45, VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 24.0),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 28),
+            const SizedBox(width: 16),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
+            ),
+            const Spacer(),
+            Text(
+              value,
+              style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.5), fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.black.withOpacity(0.3)),
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showBestPhotoModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Image.asset(
+                  'lib/assets/images/best_photo_illustration.png',
+                  height: 140,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 140,
+                      width: 140,
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.camera_enhance_rounded, size: 60, color: Colors.amber),
+                    );
+                  },
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  'Put your best photo first',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'Shine, every time. Best Photo keeps checking your photos and always puts your most popular pic first.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black.withOpacity(0.6),
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.04),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Use Best Photo',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Text(
+                        (_useBestPhoto == true) ? 'On' : 'Off',
+                        style: TextStyle(
+                          color: Colors.black.withOpacity(0.5),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Switch(
+                        value: _useBestPhoto,
+                        activeColor: Colors.black,
+                        activeTrackColor: Colors.black.withOpacity(0.8),
+                        onChanged: (value) {
+                          setModalState(() {
+                            _useBestPhoto = value;
+                          });
+                          setState(() {
+                            _useBestPhoto = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 58,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showVerificationModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close, size: 28),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Image.asset(
+                'lib/assets/images/verification_illustration.png',
+                height: 180,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 180,
+                  width: 180,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.05),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.verified_user_rounded, size: 80, color: Colors.blueAccent),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              'How would you like to get verified?',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, height: 1.1),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Choose which level of verification works for you.',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black.withOpacity(0.6),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 32),
+            _verificationOption(
+              Icons.badge_outlined,
+              'ID verification',
+              'Our highest level of verification that proves your identity, including your age.',
+            ),
+            const SizedBox(height: 24),
+            _verificationOption(
+              Icons.camera_alt_rounded,
+              'Photo verification',
+              'We\'ll check that a selfie you send matches your profile photos.',
+            ),
+            const SizedBox(height: 48),
+            SizedBox(
+              width: double.infinity,
+              height: 58,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text('Get ID verified', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 58,
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(context),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.black, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text(
+                  'Get photo verified',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _verificationOption(IconData icon, String title, String description) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+            color: Colors.black,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: Colors.white, size: 24),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black.withOpacity(0.6),
+                  height: 1.3,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
